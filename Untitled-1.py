@@ -30,7 +30,7 @@ def show():
     )
     
 
-btn = tk.Button(top, text = 'Click me !', bd = '5',command = show)
+btn = tk.Button(top, text = 'Submit', bd = '5',command = show)
 btn.pack(side = "bottom")
 
 
