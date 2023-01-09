@@ -1,58 +1,208 @@
-#importing the library
+from tkinter import *
 import tkinter as tk
-from tkinter import *  
+import sqlite3
 from tkinter.messagebox import showinfo
 
-#create an instance of tkinter frame
-top = Tk()  
-top.geometry('1500x1500')
-top.resizable(0,0)
+root = tk.Tk()
+root.resizable(0, 0)
+root.title("Registration Form")
 
-top.title("Form")
+reg = Frame(root)
 
-#define size of window or frame
-top.geometry("400x400")  
-head = Label(top, text = "IDENTITY FORM",fg="white",bg="blue").place(x = 100,y = 10)  
-
-name = Label(top, text = "Name:").place(x = 30,y = 50)  
-email = Label(top, text = "Father's Name:").place(x = 30, y = 90)  
-password = Label(top, text = "College:").place(x = 30, y = 130)
-phone = Label(top, text = "Phone No.:").place(x = 30, y = 170) 
-age = Label(top, text = "Date of Birth:").place(x = 30, y = 210)  
-dept = Label(top, text = "Dept.:").place(x = 30, y = 280)
-gender = Label(top, text = "Gender:").place(x = 30, y = 250) 
-e1 = Entry(top).place(x = 150, y = 50)  
-e2 = Entry(top).place(x = 150, y = 90)  
-e3 = Entry(top).place(x = 150, y = 130)
-e4 = Entry(top).place(x = 150, y = 170) 
-e5 = Entry(top).place(x = 150, y = 210)
-
-var2 = IntVar()
-var3=StringVar()
-var1= IntVar()
-var4=IntVar()
-var=IntVar()
+Fullname = StringVar()
+Email = StringVar()
 
 
-Radiobutton(top, text="Male",padx = 5, variable=var, value=1).place(x=100,y=250)
-Radiobutton(top, text="Female",padx = 20, variable=var, value=2).place(x=200,y=250)
-
-Radiobutton(top, text="CSE", variable=var1,value=1).place(x=100,y=280)
-Radiobutton(top, text="IT", variable=var1,value=2).place(x=150,y=280)
-Radiobutton(top, text="ECE", variable=var1,value=3).place(x=200,y=280)
-Radiobutton(top, text="EE", variable=var1,value=4).place(x=250,y=280)
-
-Checkbutton(top, text="agreed to the terms and conditions", variable=var2).place(x=60,y=330)
+conn = sqlite3.connect('Form.db')
+with conn:
+    cursor = conn.cursor()
 
 
-def show():
-    showinfo(
-        title='Result',
-        message="Form Submitted"
-    )
-    
-Button(top, text='Submit',width=20,bg='brown',fg='white',command=show).place(x=100,y=350)
+def database():
+    name = Fullname.get()
+    email = Email.get()
+    gender = var.get()
+    branch = c.get()
+    prog = var1.get() + var2.get() + var3.get()
+    cursor.execute(
+        'CREATE TABLE IF NOT EXISTS Student ( Fullname TEXT,Email TEXT,Gender TEXT,Branch TEXT,Programming TEXT)')
+    cursor.execute('INSERT INTO Student (Fullname,Email,Gender,Branch,Programming) VALUES(?,?,?,?,?)',
+                   (name, email, gender, branch, prog))
+    conn.commit()
+    showinfo(title="Student Reacord", message="Data inserted sucessfully")
+
+
+def display():
+    cursor.execute('SELECT * FROM Student')
+    data = cursor.fetchall()
+    print(data)
+    output = ''
+    v=1
+    for x in data:
+        output = output +str(v)+".  "+ x[0] + '\t' + x[1] + '\t' + x[2] + '\t' + x[3] + ' \t' + x[4] + '\n\n'
+        v = v + 1
+    print(output)
+
+    return output
+
+
+def delete(conn, task):
+    sql = 'DELETE FROM Student WHERE Fullname =?'
+    cursor = conn.cursor()
+    cursor.execute(sql, task)
+    conn.commit()
+    showinfo(title="Student Reacord", message="Data deleted sucessfully")
+
+
+def update(task):
+    sql = 'UPDATE Student SET Email=?, Gender=?, Branch=?, Programming=? WHERE Fullname = ?'
+    cursor.execute(sql, task)
+    conn.commit()
+    showinfo(title="Student Reacord", message="Data updated sucessfully")
+
+
+def main():
+    name = Fullname.get()
+    email = Email.get()
+    gender = var.get()
+    branch = c.get()
+    prog = var1.get() + var2.get() + var3.get()
+    update(name, email, gender, branch, prog)
+
+
+def delete_task():
+    database = r"Form.db"
+    conn = sqlite3.connect(database)
+    name = Fullname.get()
+    with conn:
+        delete_task(conn, name)
+
+
+def case():
+    if len(Fullname.get()):
+        database()
+    else:
+        showinfo(
+            title='Error',
+            message="Fields need to be completed"
+        )
+
+canvas1 = tk.Canvas(root, width=1000, height=500, relief='raised', bg="white")
+canvas1.pack()
+
+label1 = tk.Label(root, text='Registration Form')
+label1.config(font=("bold", 18), bg="white")
+canvas1.create_window(250, 30, window=label1)
+
+label2 = tk.Label(root, text='Fullname :')
+label2.config(font=('helvetica', 14), bg="white")
+canvas1.create_window(65, 90, window=label2)
+
+entry1 = tk.Entry(root, textvar=Fullname, font=(14), borderwidth=2, width=30)
+canvas1.create_window(320, 90, window=entry1)
+
+label3 = tk.Label(root, text='E-mail :')
+label3.config(font=('helvetica', 14), bg="white")
+canvas1.create_window(65, 140, window=label3)
+
+entry2 = tk.Entry(root, textvar=Email, font=(14), borderwidth=2, width=30)
+canvas1.create_window(320, 140, window=entry2)
+
+label4 = tk.Label(root, text='Gender :')
+label4.config(font=('helvetica', 14), bg="white")
+canvas1.create_window(65, 190, window=label4)
+
+var = StringVar()
+rd1 = tk.Radiobutton(root, text="Male", padx=5, variable=var, value="Male")
+rd1.config(font=('helvetica', 14), bg="white")
+canvas1.create_window(200, 190, window=rd1)
+
+rd2 = tk.Radiobutton(root, text="Female", padx=20, variable=var, value="Female")
+rd2.config(font=('helvetica', 14), bg="white")
+canvas1.create_window(300, 190, window=rd2)
+
+label5 = tk.Label(root, text='Branch :')
+label5.config(font=('helvetica', 14), bg="white")
+canvas1.create_window(65, 240, window=label5)
+
+list1 = ['CSE', 'MECH', 'ENTC', 'CIVIL']
+c = StringVar()
+droplist = tk.OptionMenu(root, c, *list1)
+droplist.config(font=('helvetica', 14), bg="white", width=27)
+c.set('Select your branch')
+canvas1.create_window(320, 240, window=droplist)
+
+label6 = tk.Label(root, text='Elective :')
+label6.config(font=('helvetica', 14), bg="white")
+canvas1.create_window(65, 290, window=label6)
+
+var1 = StringVar()
+cb1 = tk.Checkbutton(root, text="App Dev", variable=var1)
+cb1.config(font=('helvetica', 14), bg="white")
+canvas1.create_window(200, 290, window=cb1)
+
+var2 = StringVar()
+cb2 = tk.Checkbutton(root, text="Web Dev", variable=var2)
+cb2.config(font=('helvetica', 14), bg="white")
+canvas1.create_window(320, 290, window=cb2)
+
+var3 = StringVar()
+cb3 = tk.Checkbutton(root, text="AI & ML", variable=var3)
+cb3.config(font=('helvetica', 14), bg="white")
+canvas1.create_window(440, 290, window=cb3)
+
+button1 = tk.Button(text=' Submit ', command=case, bg='black', fg='white', font=('helvetica', 12, 'bold'))
+canvas1.create_window(150, 350, window=button1)
+
+button2 = tk.Button(text=' Display ', command=lambda: (text.delete(1.0, END), text.insert(END, display())), bg='black',
+                    fg='white', font=('helvetica', 12, 'bold'))
+canvas1.create_window(300, 350, window=button2)
+
+#button3 = tk.Button(text=' Update ', command=main, bg='black', fg='white', font=('helvetica', 12, 'bold'))
+#canvas1.create_window(150, 450, window=button3)
+
+#button4 = tk.Button(text=' Delete ', command=delete_task, bg='black', fg='white', font=('helvetica', 12, 'bold'))
+#canvas1.create_window(300, 450, window=button4)
+
+text = tk.Text(root, height=25, width=50)
+text.config(font=('helvetica', 12), bg="white")
+canvas1.create_window(750, 270, window=text)
+
+lblDisplay = tk.Label(root, text="Student Data")
+lblDisplay.config(font=('Helvetica', 18, 'bold'), fg='black', justify=CENTER, bg="white")
+canvas1.create_window(750, 25, window=lblDisplay)
+
+
+def iExit():
+    iExit = tk.messagebox.askyesno("Scientific Calculator", "Do you want to exit ?")
+    if iExit > 0:
+        root.destroy()
+        return
+
+
+def Data():
+    root.resizable(width=False, height=False)
+    root.geometry("1000x500+0+0")
+
+
+def Form():
+    root.resizable(width=False, height=False)
+    root.geometry("500x500+0+0")
+
+
+menubar = Menu(reg)
 
 
 
-top.mainloop()  
+
+
+filemenu = Menu(menubar, tearoff=0)
+menubar.add_cascade(label='File', menu=filemenu)
+filemenu.add_command(label="Form", command=Form)
+filemenu.add_command(label="Data", command=Data)
+filemenu.add_separator()
+filemenu.add_command(label="Exit", command=iExit)
+root.config(menu=menubar)
+
+mainloop()
+
