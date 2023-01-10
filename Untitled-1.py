@@ -23,13 +23,13 @@ def database():
     email = Email.get()
     gender = var.get()
     branch = c.get()
-    prog = var1.get() + var2.get() + var3.get()
+    prog = var1.get() + var2.get() 
     cursor.execute(
         'CREATE TABLE IF NOT EXISTS Student ( Fullname TEXT,Email TEXT,Gender TEXT,Branch TEXT,Programming TEXT)')
     cursor.execute('INSERT INTO Student (Fullname,Email,Gender,Branch,Programming) VALUES(?,?,?,?,?)',
                    (name, email, gender, branch, prog))
     conn.commit()
-    showinfo(title="Student Reacord", message="Data inserted sucessfully")
+    showinfo(title="Student Record", message="Data inserted sucessfully")
 
 
 def display():
@@ -66,7 +66,7 @@ def main():
     email = Email.get()
     gender = var.get()
     branch = c.get()
-    prog = var1.get() + var2.get() + var3.get()
+    prog = var1.get() + var2.get() 
     update(name, email, gender, branch, prog)
 
 
@@ -125,7 +125,7 @@ label5 = tk.Label(root, text='Branch :')
 label5.config(font=('helvetica', 14), bg="white")
 canvas1.create_window(65, 240, window=label5)
 
-list1 = ['CSE', 'MECH', 'ENTC', 'CIVIL']
+list1 = ['CSE', 'IT', 'ECE', 'EE']
 c = StringVar()
 droplist = tk.OptionMenu(root, c, *list1)
 droplist.config(font=('helvetica', 14), bg="white", width=27)
@@ -146,10 +146,7 @@ cb2 = tk.Checkbutton(root, text="Web Dev", variable=var2)
 cb2.config(font=('helvetica', 14), bg="white")
 canvas1.create_window(320, 290, window=cb2)
 
-var3 = StringVar()
-cb3 = tk.Checkbutton(root, text="AI & ML", variable=var3)
-cb3.config(font=('helvetica', 14), bg="white")
-canvas1.create_window(440, 290, window=cb3)
+
 
 button1 = tk.Button(text=' Submit ', command=case, bg='black', fg='white', font=('helvetica', 12, 'bold'))
 canvas1.create_window(150, 350, window=button1)
@@ -174,7 +171,7 @@ canvas1.create_window(750, 25, window=lblDisplay)
 
 
 def iExit():
-    iExit = tk.messagebox.askyesno("Scientific Calculator", "Do you want to exit ?")
+    iExit = tk.messagebox.askyesno("Exit", "Do you want to exit ?")
     if iExit > 0:
         root.destroy()
         return
@@ -205,4 +202,3 @@ filemenu.add_command(label="Exit", command=iExit)
 root.config(menu=menubar)
 
 mainloop()
-
